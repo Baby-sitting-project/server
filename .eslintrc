@@ -1,0 +1,35 @@
+{
+  "env": {
+    "node": true,
+    "es6": true
+  },
+  "plugins": ["import", "@typescript-eslint/eslint-plugin", "promise", "security", "jest"],
+  "parser": "@typescript-eslint/parser",
+  "extends": [
+    "plugin:@typescript-eslint/recommended",
+    "eslint:recommended",
+    "plugin:node/recommended",
+    "plugin:import/recommended",
+    "plugin:promise/recommended",
+    "plugin:security/recommended",
+    "plugin:jest/recommended"
+  ],
+  "parserOptions": {
+    "sourceType": "module",
+    "ecmaVersion": "latest"
+  },
+  "rules": {
+    "node/no-unsupported-features/es-syntax": ["error", { "ignores": ["modules"] }],
+    "import/resolver": {
+      "node": {
+        "extensions": ".ts",
+        "moduleDirectory": ["node_modules", "src/"]
+      }
+    }
+  },
+  "settings": {
+    "import/parsers": {
+      "@typescript-eslint/parser": ".ts"
+    }
+  }
+}
