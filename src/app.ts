@@ -6,7 +6,6 @@ import cookieParser from 'cookie-parser';
 import responseTime from 'response-time';
 import compression from 'compression';
 import xssClean from 'xss-clean';
-import eventsRouter from './routes/events-router';
 import usersRouter from './routes/users-router';
 import feedbackRouter from './routes/feedback-router';
 import meetingRouter from './routes/meeting-router';
@@ -33,7 +32,6 @@ app.use((_, res, next) => {
   next();
 });
 
-app.use(eventsRouter);
 app.use(usersRouter);
 app.use(feedbackRouter);
 app.use(meetingRouter);

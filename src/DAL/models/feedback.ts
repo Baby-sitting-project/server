@@ -6,7 +6,7 @@ const FeedbackSchema = new Schema({
   babysitterId: String,
   nickName: String,
   comment: String,
-  stars: String,
+  stars: Number,
   time: Date
 });
 

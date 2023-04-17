@@ -13,6 +13,8 @@ const usersSchema = new Schema({
   },
   password: String,
   isBabysitter: Boolean,
+  idsFavorites: Array,
+  available: Boolean,
   token : String,
   currentCodeEmail : String
 });

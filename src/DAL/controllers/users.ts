@@ -1,5 +1,4 @@
 import { resHandler } from '.';
-import EventsConn from '../models/events';
 import UsersConn from '../models/users';
 import { genSaltSync, hashSync, compareSync } from 'bcrypt';
 import jwt from 'jsonwebtoken';
@@ -48,6 +47,21 @@ export const addNewUser = async (req, res) => {
         admin: true,
         authorized: false,
         tempMailCode: null,
+        // firstName: req.body.firstName,
+        // // lastName: String,
+        // // email: {type: String, required: true, unique: true},
+        // // phone: String,
+        // // address: {
+        // //   latitude: Number,
+        // //   longitude: Number,
+        // //   name : String
+        // // },
+        // // password: String,
+        // // isBabysitter: Boolean,
+        // // idsFavorites: Array,
+        // // available: Boolean,
+        // // token : String,
+        // currentCodeEmail: "1234"
       },
       (err, doc) => {
         resHandler(err, {user: doc, token: createToken({id: doc.email, role: doc.password})}, res, 'There is been an error creating the user');
@@ -73,6 +87,7 @@ export const updateUser = (req, res) => {
       name: req.body.name,
       location: req.body.location,
       phoneNumber: req.body.phoneNumber
+      // and more parameter
     };
   }
 
@@ -81,7 +96,7 @@ export const updateUser = (req, res) => {
   );
 };
 
-export const findAllUnAuthorized = (req, res) => {
+export const findAllAvailableBabysitters = (req, res) => {
   UsersConn.find({ authorized: false }, (err, doc) =>
     resHandler(err, doc, res, 'There is been an error getting all the unAuthorized users')
   );
@@ -111,10 +126,10 @@ export const sendCodeToMail = async (req, res) => {
     });
 };
 
-export const authorizeUser = (req, res) => {
-  UsersConn.findOneAndUpdate({ _id: req.body.ObjectId }, { authorized: req.body.authorized }, (err, doc) => {
+export const changeAvailability = (req, res) => {
+  UsersConn.findOneAndUpdate({ _id: req.body.ObjectId }, { available: req.body.available }, (err, doc) => {
     sendEmailToAutorizedUser(doc);
-    resHandler(err, doc, res, 'There is been an error updating the user authorization')
+    resHandler(err, doc, res, 'There is been an error updating the user availability')
   }
   );
 };
@@ -123,9 +138,9 @@ export const deleteUser = (req, res) => {
   UsersConn.findOneAndDelete(
     { _id: req.body.id },
     () =>
-      EventsConn.deleteMany({ donatorId: req.body.id }, (err, doc) =>
-        resHandler(err, doc, res, 'There is been an error deleting the user and is events')
-      ),
+      // EventsConn.deleteMany({ donatorId: req.body.id }, (err, doc) =>
+      //   resHandler(err, doc, res, 'There is been an error deleting the user and is events')
+      // ),
     (err, doc) => resHandler(err, doc, res, req.body.id)
   );
 };
@@ -166,12 +181,10 @@ export const login = (req, res) => {
       : (() => {
           doc
             ? compareSync(req.body.password, doc.password)
-              ? doc.authorized
                 ? res.send({
                     user: doc,
                     token: createToken({ id: doc._id, email: doc.email.toLowerCase(), password: doc.password })
                   })
-                : res.send({ user: doc })
               : res.send(false)
             : res.send(false);
         })();
@@ -211,10 +224,10 @@ const sendEmailCode = (result, mailCodeDoc, res) => {
   });
 
   var mailOptions = {
-    from: 'appfalafel@gmail.com',
+   // from: 'נשנטSןאאןמע@gmail.com',
     to: mailCodeDoc.email,
-    subject: 'קוד זמני - אפליקצית פלפאל',
-    text: `:) הי כאן פלאפל 
+    subject: 'קוד זמני - אפליקצית בייביסיטינג',
+    text: `:) הי כאן בייביסיטינג 
 קודך הזמני הינו: ${result}`
   };
 

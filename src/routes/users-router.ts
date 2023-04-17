@@ -1,15 +1,13 @@
 import { Router} from 'express';
 import {
-  authorizeUser,
   addNewUser,
   checkCode,
   updateUser,
   sendCodeToMail,
   deleteUser,
   login,
-  findAllUnAuthorized,
   loginWithToken,
-  isUserRegistered
+  isUserRegistered, changeAvailability, findAllAvailableBabysitters
 } from '../DAL/controllers/users';
 
 import authenticateToken from "../utils/authMiddleware";
@@ -20,7 +18,7 @@ usersRouter.post('/newUser', authenticateNonUserToken, addNewUser)
 
 usersRouter.post('/doesUserExist', isUserRegistered)
 
-usersRouter.post('/authorizeUser', authenticateToken, authorizeUser )
+usersRouter.post('/changeAvailability', authenticateToken, changeAvailability )
 
 usersRouter.post('/deleteUser', authenticateToken, deleteUser)
 
@@ -34,7 +32,7 @@ usersRouter.post('/checkCode', checkCode)
 
 usersRouter.post('/sendCodeToMail', sendCodeToMail)
 
-usersRouter.get('/unAuthorizedUsers', authenticateToken, findAllUnAuthorized)
+usersRouter.get('/allAvailableBabysitters', authenticateToken, findAllAvailableBabysitters)
 
  
 export default usersRouter;

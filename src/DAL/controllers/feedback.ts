@@ -8,7 +8,7 @@ export const addNewFeedback = async (req, res) => {
   const date = new Date().toLocaleString('en-US', { timeZone: 'Asia/Jerusalem' });
   FeedbacksConn.create(
     {
-      //
+      // parameter
       time: new Date(date)
     },
     (err, doc) => {
@@ -16,23 +16,27 @@ export const addNewFeedback = async (req, res) => {
     }
   );
 };
+//
+// export const updateFeedbackStatus = (req, res) => {
+//   FeedbacksConn.findOneAndUpdate({ _id: req.body.id }, { status: req.body.status }, {new: true}, (err, doc) =>
+//     resHandler(err, doc, res, 'There is been an error updating the feedback')
+//   );
+// };
+//
+// export const deleteFeedback = (req, res) => {
+//   FeedbacksConn.findOneAndDelete({ _id: req.body.id }, (err, doc) =>
+//     resHandler(err, doc, res, 'There is been an error deleting the feedback')
+//   );
+// };
+//
+// export const getAllFeedbacks = (req, res) => {
+//   FeedbacksConn.find({status : "ACTIVE"}, (err, doc) => resHandler(err, doc, res, 'There is been an error getting all the feedback'));
+// };
 
-export const updateFeedbackStatus = (req, res) => {
-  FeedbacksConn.findOneAndUpdate({ _id: req.body.id }, { status: req.body.status }, {new: true}, (err, doc) =>
-    resHandler(err, doc, res, 'There is been an error updating the feedback')
-  );
+export const getAllFeedbacksByParent = (req, res) => {
+  FeedbacksConn.find({ parentId: req.body.parentObjectId }, (err, doc) => resHandler(err, doc, res, 'There is been an error getting all the user feedbacks'));
 };
 
-export const deleteFeedbackStatus = (req, res) => {
-  FeedbacksConn.findOneAndDelete({ _id: req.body.id }, (err, doc) =>
-    resHandler(err, doc, res, 'There is been an error deleting the feedback')
-  );
-};
-
-export const getAllFeedbacks = (req, res) => {
-  FeedbacksConn.find({status : "ACTIVE"}, (err, doc) => resHandler(err, doc, res, 'There is been an error getting all the feedback'));
-};
-
-export const getAllUserFeedbacks = (req, res) => {
-  FeedbacksConn.find({ donatorId: req.body.DonorObjectId }, (err, doc) => resHandler(err, doc, res, 'There is been an error getting all the user feedbacks'));
+export const getAlFeedbacksByBabysitter = (req, res) => {
+  FeedbacksConn.find({ babysitterId: req.body.babysitterObjectId }, (err, doc) => resHandler(err, doc, res, 'There is been an error getting all the user feedbacks'));
 };

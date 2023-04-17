@@ -4,23 +4,25 @@ import { Router } from 'express';
 import authenticateToken from "../utils/authMiddleware";
 import {
   addNewFeedback,
-  deleteFeedbackStatus,
-  getAllFeedbacks,
-  getAllUserFeedbacks,
-  updateFeedbackStatus
+   getAlFeedbacksByBabysitter,
+   getAllFeedbacksByParent
+
+
 } from '../DAL/controllers/feedback';
 
 const feedbackRouter = Router();
 
-feedbackRouter.post('/newEvent', authenticateToken, addNewFeedback)
+feedbackRouter.post('/newFeedback', authenticateToken, addNewFeedback)
 
-feedbackRouter.post('/updateEvent',authenticateToken, updateFeedbackStatus)
+// feedbackRouter.post('/updateFeedback',authenticateToken, updateFeedbackStatus)
+//
+// feedbackRouter.post('/deleteFeedback', authenticateToken, deleteFeedback)
+//
+// feedbackRouter.get('/getAllFeedback', getAllFeedbacks)
 
-feedbackRouter.post('/deleteEvent', authenticateToken, deleteFeedbackStatus)
+feedbackRouter.post('/feedbacksByParent', authenticateToken, getAllFeedbacksByParent)
 
-feedbackRouter.get('/getAllEvents', getAllFeedbacks)
-
-feedbackRouter.post('/getAllUserEvents', authenticateToken, getAllUserFeedbacks)
+feedbackRouter.post('/feedbacksByBabysitter', authenticateToken, getAlFeedbacksByBabysitter)
 
 // @ts-ignore
 export default feedbackRouter;
