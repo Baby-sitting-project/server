@@ -8,7 +8,11 @@ export const addNewFeedback = async (req, res) => {
   const date = new Date().toLocaleString('en-US', { timeZone: 'Asia/Jerusalem' });
   FeedbacksConn.create(
     {
-      // parameter
+      parentId: req.body.parentId,
+      babysitterId: req.body.babysitterId,
+      nickName: req.body.nickName,
+      comment: req.body.comment,
+      stars: req.body.stars,
       time: new Date(date)
     },
     (err, doc) => {
@@ -29,14 +33,14 @@ export const addNewFeedback = async (req, res) => {
 //   );
 // };
 //
-// export const getAllFeedbacks = (req, res) => {
-//   FeedbacksConn.find({status : "ACTIVE"}, (err, doc) => resHandler(err, doc, res, 'There is been an error getting all the feedback'));
-// };
+export const getAllFeedbacks = (req, res) => {
+  FeedbacksConn.find({}, (err, doc) => resHandler(err, doc, res, 'There is been an error getting all the feedback'));
+};
 
 export const getAllFeedbacksByParent = (req, res) => {
-  FeedbacksConn.find({ parentId: req.body.parentObjectId }, (err, doc) => resHandler(err, doc, res, 'There is been an error getting all the user feedbacks'));
+  FeedbacksConn.find({ parentId: req.body.parentId }, (err, doc) => resHandler(err, doc, res, 'There is been an error getting all the user feedbacks'));
 };
 
 export const getAlFeedbacksByBabysitter = (req, res) => {
-  FeedbacksConn.find({ babysitterId: req.body.babysitterObjectId }, (err, doc) => resHandler(err, doc, res, 'There is been an error getting all the user feedbacks'));
+  FeedbacksConn.find({ babysitterId: req.body.babysitterId }, (err, doc) => resHandler(err, doc, res, 'There is been an error getting all the user feedbacks'));
 };

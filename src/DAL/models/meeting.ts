@@ -12,6 +12,6 @@ const MeetingSchema = new Schema({
   time: Date
 });
 
-const MettingConn =  model('meetings', MeetingSchema);
+const MeetingConn =  model('meetings', MeetingSchema);
 
-export default MettingConn;
+export default MeetingConn;

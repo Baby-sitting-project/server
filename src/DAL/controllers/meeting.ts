@@ -1,6 +1,6 @@
 import { config } from 'dotenv';
 import { resHandler } from '.';
-import MeetingsConn from '../models/feedback';
+import MeetingsConn from '../models/meeting';
 config();
 
 
@@ -8,8 +8,14 @@ export const addNewMeeting = async (req, res) => {
   const date = new Date().toLocaleString('en-US', { timeZone: 'Asia/Jerusalem' });
   MeetingsConn.create(
     {
-      //
-      time: new Date(date)
+      "parentId": req.body.parentId,
+      "babysitterId": req.body.babysitterId,
+      "address": {
+        "latitude": req.body.address.latitude,
+        "longitude": req.body.address.longitude,
+        "name" : req.body.address.name
+      },
+      "time": new Date(date)
     },
     (err, doc) => {
       resHandler(err, doc, res, 'There is been an error creating the meeting');
@@ -34,9 +40,9 @@ export const addNewMeeting = async (req, res) => {
 // };
 
 export const getAllMeetingsByBabysitter = (req, res) => {
-  MeetingsConn.find({ babysitterId: req.body.babysitterObjectId }, (err, doc) => resHandler(err, doc, res, 'There is been an error getting all the user meeting'));
+  MeetingsConn.find({ babysitterId: req.body.babysitterId }, (err, doc) => resHandler(err, doc, res, 'There is been an error getting all the user meeting'));
 };
 
 export const getAllMeetingsByParent = (req, res) => {
-  MeetingsConn.find({ parentId: req.body.parentObjectId }, (err, doc) => resHandler(err, doc, res, 'There is been an error getting all the user meeting'));
+  MeetingsConn.find({ parentId: req.body.parentId }, (err, doc) => resHandler(err, doc, res, 'There is been an error getting all the user meeting'));
 };

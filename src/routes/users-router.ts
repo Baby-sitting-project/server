@@ -14,13 +14,14 @@ import authenticateToken from "../utils/authMiddleware";
 import authenticateNonUserToken from '../utils/authNonUserMiddleware';
 const usersRouter = Router();
 
-usersRouter.post('/newUser', authenticateNonUserToken, addNewUser)
+usersRouter.post('/newUser', addNewUser)
 
 usersRouter.post('/doesUserExist', isUserRegistered)
 
 usersRouter.post('/changeAvailability', authenticateToken, changeAvailability )
 
-usersRouter.post('/deleteUser', authenticateToken, deleteUser)
+usersRouter.post('/deleteUser', deleteUser)
+// usersRouter.post('/deleteUser', authenticateToken, deleteUser)
 
 usersRouter.put('/updateUser', authenticateNonUserToken, updateUser)
 
@@ -32,7 +33,8 @@ usersRouter.post('/checkCode', checkCode)
 
 usersRouter.post('/sendCodeToMail', sendCodeToMail)
 
-usersRouter.get('/allAvailableBabysitters', authenticateToken, findAllAvailableBabysitters)
+// usersRouter.get('/allAvailableBabysitters', authenticateToken, findAllAvailableBabysitters)
+usersRouter.get('/allAvailableBabysitters', findAllAvailableBabysitters)
 
  
 export default usersRouter;

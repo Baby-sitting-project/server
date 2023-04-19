@@ -40,10 +40,12 @@ app.set('showStackError', true);
 
 const MONGO = process.env.MONGO;
 const connectionpOptions = {
-  dbName: `Babysitting`
+  dbName: `first`
 };
 
-export const mongoConnection = mongoose.connect(MONGO, connectionpOptions);
+export const mongoConnection = mongoose.connect(MONGO, connectionpOptions).then(res => {
+  console.log("connect to mongo")
+});
 
 export default app;
 

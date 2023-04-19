@@ -15,11 +15,64 @@ const createToken = payload => {
   });
 };
 
-export const isUserRegistered = async (req, res) => {
-    UsersConn.find({ email: req.body.email.toLowerCase() }, (err, doc) => {
-        resHandler(err, { isUserRegistered: doc.length !== 0 }, res, 'There is been an error updating the user')
+export const addNewUser = async (req, res) => {
+  const salt =  genSaltSync();
+  const hashPassword = hashSync(req.body.password, salt);
+  if (!(await doesUserExist(req, res)))
+  {
+    UsersConn.create(
+      {
+        "firstName": req.body.firstName,
+        "lastName": req.body.lastName,
+        "email": req.body.email,
+        "phone": req.body.phone,
+        "address": {
+          "latitude": req.body.address.latitude,
+          "longitude": req.body.address.longitude,
+          "name" : req.body.address.name
+        },
+        "password": hashPassword,
+        "isBabysitter": req.body.isBabysitter,
+        "idsFavorites": [],
+        "available": false,
+        "currentCodeEmail" : ""},
+      (err, doc) => {
+        resHandler(err, {user: doc, token: createToken({id: doc.email, role: doc.password})}, res, 'There is been an error creating the user');
       }
     );
+  } else {
+    res.status(500).send('שם משתמש כבר רשום במערכת')
+  }
+};
+
+export const findAllAvailableBabysitters = (req, res) => {
+  UsersConn.find({ available: true }, (err, doc) =>
+    resHandler(err, doc, res, 'There is been an error getting all the unAuthorized users')
+  );
+};
+
+export const deleteUser = (req, res) => {
+  UsersConn.findOneAndDelete(
+    { _id: req.body.id },
+    // () =>
+    //   EventsConn.deleteMany({ donatorId: req.body.id }, (err, doc) =>
+    //     resHandler(err, doc, res, 'There is been an error deleting the user and is events')
+    //   ),
+    (err, doc) => resHandler(err, doc, res, req.body.id)
+  );
+};
+
+
+
+
+
+
+
+export const isUserRegistered = async (req, res) => {
+  UsersConn.find({ email: req.body.email.toLowerCase() }, (err, doc) => {
+      resHandler(err, { isUserRegistered: doc.length !== 0 }, res, 'There is been an error updating the user')
+    }
+  );
 }
 
 const doesUserExist = async (req, res) => {
@@ -31,46 +84,6 @@ const doesUserExist = async (req, res) => {
     return true;
   }
 }
-
-export const addNewUser = async (req, res) => {
-  const salt =  genSaltSync();
-  const hashPassword = hashSync(req.body.password, salt);
-  if (!(await doesUserExist(req, res)))
-  {
-    UsersConn.create(
-      {
-        name: req.body.name,
-        email: req.body.email.toLowerCase(),
-        phoneNumber: req.body.phoneNumber,
-        location: req.body.location,
-        password: hashPassword,
-        admin: true,
-        authorized: false,
-        tempMailCode: null,
-        // firstName: req.body.firstName,
-        // // lastName: String,
-        // // email: {type: String, required: true, unique: true},
-        // // phone: String,
-        // // address: {
-        // //   latitude: Number,
-        // //   longitude: Number,
-        // //   name : String
-        // // },
-        // // password: String,
-        // // isBabysitter: Boolean,
-        // // idsFavorites: Array,
-        // // available: Boolean,
-        // // token : String,
-        // currentCodeEmail: "1234"
-      },
-      (err, doc) => {
-        resHandler(err, {user: doc, token: createToken({id: doc.email, role: doc.password})}, res, 'There is been an error creating the user');
-      }
-    );
-  } else {
-    res.status(500).send('שם משתמש כבר רשום במערכת')
-  }
-};
 
 export const updateUser = (req, res) => {
   let user;
@@ -93,12 +106,6 @@ export const updateUser = (req, res) => {
 
   UsersConn.findOneAndUpdate(findBy, user, { new: true }, (err, doc) =>
     resHandler(err, doc, res, 'There is been an error updating the user')
-  );
-};
-
-export const findAllAvailableBabysitters = (req, res) => {
-  UsersConn.find({ authorized: false }, (err, doc) =>
-    resHandler(err, doc, res, 'There is been an error getting all the unAuthorized users')
   );
 };
 
@@ -131,17 +138,6 @@ export const changeAvailability = (req, res) => {
     sendEmailToAutorizedUser(doc);
     resHandler(err, doc, res, 'There is been an error updating the user availability')
   }
-  );
-};
-
-export const deleteUser = (req, res) => {
-  UsersConn.findOneAndDelete(
-    { _id: req.body.id },
-    () =>
-      // EventsConn.deleteMany({ donatorId: req.body.id }, (err, doc) =>
-      //   resHandler(err, doc, res, 'There is been an error deleting the user and is events')
-      // ),
-    (err, doc) => resHandler(err, doc, res, req.body.id)
   );
 };
 
