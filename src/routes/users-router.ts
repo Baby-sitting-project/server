@@ -34,7 +34,7 @@ usersRouter.post('/checkCode', checkCode)
 usersRouter.post('/sendCodeToMail', sendCodeToMail)
 
 // usersRouter.get('/allAvailableBabysitters', authenticateToken, findAllAvailableBabysitters)
-usersRouter.get('/allAvailableBabysitters', findAllAvailableBabysitters)
+usersRouter.get('/allAvailableBabysitters',authenticateToken, findAllAvailableBabysitters)
 
  
 export default usersRouter;

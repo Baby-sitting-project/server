@@ -16,23 +16,22 @@ const createToken = payload => {
 };
 
 export const addNewUser = async (req, res) => {
+  
   const salt =  genSaltSync();
   const hashPassword = hashSync(req.body.password, salt);
   if (!(await doesUserExist(req, res)))
   {
     UsersConn.create(
       {
-        "firstName": req.body.firstName,
-        "lastName": req.body.lastName,
+        "name": req.body.name,
         "email": req.body.email,
-        "phone": req.body.phone,
+        "phone": req.body.phoneNumber,
         "address": {
-          "latitude": req.body.address.latitude,
-          "longitude": req.body.address.longitude,
-          "name" : req.body.address.name
+          "latitude": req.body.location.latitude,
+          "longitude": req.body.location.longitude,
         },
         "password": hashPassword,
-        "isBabysitter": req.body.isBabysitter,
+        "isBabysitter": req.body.type === 'בייביסיטר',
         "idsFavorites": [],
         "available": false,
         "currentCodeEmail" : ""},
@@ -46,6 +45,7 @@ export const addNewUser = async (req, res) => {
 };
 
 export const findAllAvailableBabysitters = (req, res) => {
+  
   UsersConn.find({ available: true }, (err, doc) =>
     resHandler(err, doc, res, 'There is been an error getting all the unAuthorized users')
   );
@@ -69,7 +69,9 @@ export const deleteUser = (req, res) => {
 
 
 export const isUserRegistered = async (req, res) => {
-  UsersConn.find({ email: req.body.email.toLowerCase() }, (err, doc) => {
+    UsersConn.find({ email: req.body.email.toLowerCase() }, (err, doc) => {
+      console.log({ isUserRegistered: doc.length !== 0 });
+      
       resHandler(err, { isUserRegistered: doc.length !== 0 }, res, 'There is been an error updating the user')
     }
   );
@@ -143,6 +145,8 @@ export const changeAvailability = (req, res) => {
 
 export const checkCode = (req, res) => {
   MailCodeConn.findOne({ email: req.body.email.toLowerCase() }, (err, doc) => {
+    console.log('im in');
+    
     err
       ? (() => {
           console.log('there is been an error checking the user' + err);
@@ -168,7 +172,8 @@ const isLessThan30Min = (date) => {
 }
 
 export const login = (req, res) => {
-  UsersConn.findOne({ email: req.body.email.toLowerCase() }, (err, doc) => {
+  
+  UsersConn.findOne({ email: req.body.mail.toLowerCase() }, (err, doc) => {
     err
       ? (ERR => {
           console.log('there is been an error checking the user' + err);
@@ -211,16 +216,18 @@ export const loginWithToken = (req, res) => {
 };
 
 const sendEmailCode = (result, mailCodeDoc, res) => {
+  console.log(mailCodeDoc.email);
   var transporter = createTransport({
     service: 'gmail',
     auth: {
-      user:  process.env.SYSTEM_MAIL,
-      pass:  process.env.SYSTEM_MAIL_CODE
+      user:  'babysittingappteam@gmail.com',
+      pass:  'eqteyihmqprjcygw'
     }
   });
 
+  
   var mailOptions = {
-   // from: 'נשנטSןאאןמע@gmail.com',
+   from: 'babysittingappteam@gmail.com',
     to: mailCodeDoc.email,
     subject: 'קוד זמני - אפליקצית בייביסיטינג',
     text: `:) הי כאן בייביסיטינג 
