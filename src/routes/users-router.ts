@@ -7,7 +7,7 @@ import {
   deleteUser,
   login,
   loginWithToken,
-  isUserRegistered, changeAvailability, findAllAvailableBabysitters
+  isUserRegistered, changeAvailability, findAllAvailableBabysitters, updatePassword
 } from '../DAL/controllers/users';
 
 import authenticateToken from "../utils/authMiddleware";
@@ -24,6 +24,8 @@ usersRouter.post('/deleteUser', deleteUser)
 // usersRouter.post('/deleteUser', authenticateToken, deleteUser)
 
 usersRouter.put('/updateUser', authenticateNonUserToken, updateUser)
+
+usersRouter.put('/updatePassword', updatePassword)
 
 usersRouter.post('/login', login)
 

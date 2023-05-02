@@ -87,24 +87,31 @@ const doesUserExist = async (req, res) => {
   }
 }
 
-export const updateUser = (req, res) => {
+export const updateUser = (req, res) => {  
   let user;
   let findBy;
-  if (req.body.updatePassword) {
-    const salt = genSaltSync();
-    findBy = { email: req.body.email.toLowerCase() }
-    user = {
-      password: hashSync(req.body.password, salt)
-    };
-  } else {
+
     findBy = { _id: req.body.ObjectId }
     user = {
       name: req.body.name,
       location: req.body.location,
       phoneNumber: req.body.phoneNumber
       // and more parameter
+    }
+
+  UsersConn.findOneAndUpdate(findBy, user, { new: true }, (err, doc) =>
+    resHandler(err, doc, res, 'There is been an error updating the user')
+  );
+};
+
+export const updatePassword = (req, res) => {  
+  let user;
+  let findBy;
+    const salt = genSaltSync();
+    findBy = { email: req.body.email.toLowerCase() }
+    user = {
+      password: hashSync(req.body.password, salt)
     };
-  }
 
   UsersConn.findOneAndUpdate(findBy, user, { new: true }, (err, doc) =>
     resHandler(err, doc, res, 'There is been an error updating the user')
@@ -144,15 +151,17 @@ export const changeAvailability = (req, res) => {
 };
 
 export const checkCode = (req, res) => {
-  MailCodeConn.findOne({ email: req.body.email.toLowerCase() }, (err, doc) => {
-    console.log('im in');
-    
+  MailCodeConn.findOne({ email: req.body.email.toLowerCase() }, (err, doc) => {    
     err
       ? (() => {
           console.log('there is been an error checking the user' + err);
           res.send('there is been an error checking the user');
         })()
       : (() => {
+        console.log(doc);
+        console.log(req.body);
+        
+        
           if (doc && doc.code.toString() === req.body.code.toString() && isLessThan30Min(doc.date)) {
               res.send({
                 id: doc._id,
