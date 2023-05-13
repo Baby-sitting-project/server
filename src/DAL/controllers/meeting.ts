@@ -22,6 +22,7 @@ export const addNewMeeting = async (req, res) => {
     }
   );
 };
+
 //
 // export const updateMeetingStatus = (req, res) => {
 //   MeetingsConn.findOneAndUpdate({ _id: req.body.id }, { status: req.body.status }, {new: true}, (err, doc) =>
