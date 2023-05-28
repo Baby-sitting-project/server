@@ -16,36 +16,39 @@ const createToken = payload => {
 };
 
 export const addNewUser = async (req, res) => {
-  
-  const salt =  genSaltSync();
+  const salt = genSaltSync();
   const hashPassword = hashSync(req.body.password, salt);
-  if (!(await doesUserExist(req, res)))
-  {
+  if (!(await doesUserExist(req, res))) {
     UsersConn.create(
       {
-        "name": req.body.name,
-        "email": req.body.email,
-        "phone": req.body.phoneNumber,
-        "address": {
-          "latitude": req.body.location.latitude,
-          "longitude": req.body.location.longitude,
+        name: req.body.name,
+        email: req.body.email,
+        phone: req.body.phoneNumber,
+        address: {
+          latitude: req.body.location.latitude,
+          longitude: req.body.location.longitude
         },
-        "password": hashPassword,
-        "isBabysitter": req.body.type === 'בייביסיטר',
-        "idsFavorites": [],
-        "available": false,
-        "currentCodeEmail" : ""},
+        password: hashPassword,
+        isBabysitter: req.body.type === 'בייביסיטר',
+        idsFavorites: [],
+        available: false,
+        currentCodeEmail: ''
+      },
       (err, doc) => {
-        resHandler(err, {user: doc, token: createToken({id: doc.email, role: doc.password})}, res, 'There is been an error creating the user');
+        resHandler(
+          err,
+          { user: doc, token: createToken({ id: doc.email, role: doc.password }) },
+          res,
+          'There is been an error creating the user'
+        );
       }
     );
   } else {
-    res.status(500).send('שם משתמש כבר רשום במערכת')
+    res.status(500).send('שם משתמש כבר רשום במערכת');
   }
 };
 
 export const findAllAvailableBabysitters = (req, res) => {
-  
   UsersConn.find({ available: true }, (err, doc) =>
     resHandler(err, doc, res, 'There is been an error getting all the unAuthorized users')
   );
@@ -62,20 +65,13 @@ export const deleteUser = (req, res) => {
   );
 };
 
-
-
-
-
-
-
 export const isUserRegistered = async (req, res) => {
-    UsersConn.find({ email: req.body.email.toLowerCase() }, (err, doc) => {
-      console.log({ isUserRegistered: doc.length !== 0 });
-      
-      resHandler(err, { isUserRegistered: doc.length !== 0 }, res, 'There is been an error updating the user')
-    }
-  );
-}
+  UsersConn.find({ email: req.body.email.toLowerCase() }, (err, doc) => {
+    console.log({ isUserRegistered: doc.length !== 0 });
+
+    resHandler(err, { isUserRegistered: doc.length !== 0 }, res, 'There is been an error updating the user');
+  });
+};
 
 const doesUserExist = async (req, res) => {
   try {
@@ -85,37 +81,57 @@ const doesUserExist = async (req, res) => {
     res.status(500).send('קיימת בעית תקשורת עם השרת');
     return true;
   }
-}
+};
 
-export const updateUser = (req, res) => {  
+export const updateUser = (req, res) => {
   let user;
   let findBy;
 
-    findBy = { _id: req.body.ObjectId }
-    user = {
-      name: req.body.name,
-      location: req.body.location,
-      phoneNumber: req.body.phoneNumber
-      // and more parameter
-    }
+  findBy = { _id: req.body.ObjectId };
+  user = {
+    name: req.body.name,
+    location: req.body.location,
+    phoneNumber: req.body.phoneNumber
+    // and more parameter
+  };
 
   UsersConn.findOneAndUpdate(findBy, user, { new: true }, (err, doc) =>
     resHandler(err, doc, res, 'There is been an error updating the user')
   );
 };
 
-export const updatePassword = (req, res) => {  
+export const updatePassword = (req, res) => {
   let user;
   let findBy;
-    const salt = genSaltSync();
-    findBy = { email: req.body.email.toLowerCase() }
-    user = {
-      password: hashSync(req.body.password, salt)
-    };
+  const salt = genSaltSync();
+  findBy = { email: req.body.email.toLowerCase() };
+  user = {
+    password: hashSync(req.body.password, salt)
+  };
 
   UsersConn.findOneAndUpdate(findBy, user, { new: true }, (err, doc) =>
     resHandler(err, doc, res, 'There is been an error updating the user')
   );
+};
+
+export const getFavorites = async (req, res) => {
+  try {
+    let user = await UsersConn.findOne({ _id: req.body.id });
+    let favIds = user.idsFavorites;
+    UsersConn.find({ _id: { $in: favIds } }, (err, doc) => {
+      if (err) {
+        resHandler(err, null, res, 'There has been an error getting all the unAuthorized users');
+      } else {
+        // Process the doc or send the response here
+        console.log(doc)
+        res.send(doc);
+      }
+    });
+    return true;
+  } catch (e) {
+    res.status(500).send('קיימת בעית תקשורת עם השרת');
+    return true;
+  }
 };
 
 export const sendCodeToMail = async (req, res) => {
@@ -125,63 +141,60 @@ export const sendCodeToMail = async (req, res) => {
 
   MailCodeConn.findOneAndUpdate(
     { email: req.body.email.toLowerCase() },
-    { code: result, date: new Date },
-    { new: true , upsert: true},
+    { code: result, date: new Date() },
+    { new: true, upsert: true },
     (err, doc) => {
       err
         ? (() => {
-          console.log('There is been an error updating the user tempMailCode' + err);
-          res.send('There is been an error updating the user tempMailCode');
-        })()
+            console.log('There is been an error updating the user tempMailCode' + err);
+            res.send('There is been an error updating the user tempMailCode');
+          })()
         : (() => {
-          (async () => {
-            sendEmailCode(result, doc, res);
+            (async () => {
+              sendEmailCode(result, doc, res);
+            })();
           })();
-
-        })()
-    });
+    }
+  );
 };
 
 export const changeAvailability = (req, res) => {
   UsersConn.findOneAndUpdate({ _id: req.body.ObjectId }, { available: req.body.available }, (err, doc) => {
     sendEmailToAutorizedUser(doc);
-    resHandler(err, doc, res, 'There is been an error updating the user availability')
-  }
-  );
+    resHandler(err, doc, res, 'There is been an error updating the user availability');
+  });
 };
 
 export const checkCode = (req, res) => {
-  MailCodeConn.findOne({ email: req.body.email.toLowerCase() }, (err, doc) => {    
+  MailCodeConn.findOne({ email: req.body.email.toLowerCase() }, (err, doc) => {
     err
       ? (() => {
           console.log('there is been an error checking the user' + err);
           res.send('there is been an error checking the user');
         })()
       : (() => {
-        console.log(doc);
-        console.log(req.body);
-        
-        
+          console.log(doc);
+          console.log(req.body);
+
           if (doc && doc.code.toString() === req.body.code.toString() && isLessThan30Min(doc.date)) {
-              res.send({
-                id: doc._id,
-                token: createToken({ email: doc.email.toLowerCase() })
-              })
+            res.send({
+              id: doc._id,
+              token: createToken({ email: doc.email.toLowerCase() })
+            });
           } else {
-            res.send({ errorMessage: 'הקוד שגוי' })
+            res.send({ errorMessage: 'הקוד שגוי' });
           }
         })();
   });
 };
 
-const isLessThan30Min = (date) => {
+const isLessThan30Min = date => {
   const diffTime = Math.abs(new Date().getTime() - date.getTime());
 
   return diffTime / 60000 < 30;
-}
+};
 
 export const login = (req, res) => {
-  
   UsersConn.findOne({ email: req.body.mail.toLowerCase() }, (err, doc) => {
     err
       ? (ERR => {
@@ -191,10 +204,10 @@ export const login = (req, res) => {
       : (() => {
           doc
             ? compareSync(req.body.password, doc.password)
-                ? res.send({
-                    user: doc,
-                    token: createToken({ id: doc._id, email: doc.email.toLowerCase(), password: doc.password })
-                  })
+              ? res.send({
+                  user: doc,
+                  token: createToken({ id: doc._id, email: doc.email.toLowerCase(), password: doc.password })
+                })
               : res.send(false)
             : res.send(false);
         })();
@@ -229,14 +242,13 @@ const sendEmailCode = (result, mailCodeDoc, res) => {
   var transporter = createTransport({
     service: 'gmail',
     auth: {
-      user:  'babysittingappteam@gmail.com',
-      pass:  'eqteyihmqprjcygw'
+      user: 'babysittingappteam@gmail.com',
+      pass: 'eqteyihmqprjcygw'
     }
   });
 
-  
   var mailOptions = {
-   from: 'babysittingappteam@gmail.com',
+    from: 'babysittingappteam@gmail.com',
     to: mailCodeDoc.email,
     subject: 'קוד זמני - אפליקצית בייביסיטינג',
     text: `:) הי כאן בייביסיטינג 
@@ -254,12 +266,12 @@ const sendEmailCode = (result, mailCodeDoc, res) => {
   });
 };
 
-const sendEmailToAutorizedUser = (mailCodeDoc) => {
+const sendEmailToAutorizedUser = mailCodeDoc => {
   var transporter = createTransport({
     service: 'gmail',
     auth: {
-      user:  process.env.SYSTEM_MAIL,
-      pass:  process.env.SYSTEM_MAIL_CODE
+      user: process.env.SYSTEM_MAIL,
+      pass: process.env.SYSTEM_MAIL_CODE
     }
   });
 

@@ -1,4 +1,4 @@
-import { Router} from 'express';
+import { Router } from 'express';
 import {
   addNewUser,
   checkCode,
@@ -7,36 +7,41 @@ import {
   deleteUser,
   login,
   loginWithToken,
-  isUserRegistered, changeAvailability, findAllAvailableBabysitters, updatePassword
+  isUserRegistered,
+  changeAvailability,
+  findAllAvailableBabysitters,
+  updatePassword,
+  getFavorites
 } from '../DAL/controllers/users';
 
-import authenticateToken from "../utils/authMiddleware";
+import authenticateToken from '../utils/authMiddleware';
 import authenticateNonUserToken from '../utils/authNonUserMiddleware';
 const usersRouter = Router();
 
-usersRouter.post('/newUser', addNewUser)
+usersRouter.post('/newUser', addNewUser);
 
-usersRouter.post('/doesUserExist', isUserRegistered)
+usersRouter.post('/doesUserExist', isUserRegistered);
 
-usersRouter.post('/changeAvailability', authenticateToken, changeAvailability )
+usersRouter.post('/changeAvailability', authenticateToken, changeAvailability);
 
-usersRouter.post('/deleteUser', deleteUser)
+usersRouter.post('/deleteUser', deleteUser);
 // usersRouter.post('/deleteUser', authenticateToken, deleteUser)
 
-usersRouter.put('/updateUser', authenticateNonUserToken, updateUser)
+usersRouter.put('/updateUser', authenticateNonUserToken, updateUser);
 
-usersRouter.put('/updatePassword', updatePassword)
+usersRouter.put('/updatePassword', updatePassword);
 
-usersRouter.post('/login', login)
+usersRouter.post('/login', login);
 
-usersRouter.post('/loginWithToken', authenticateToken, loginWithToken)
+usersRouter.post('/loginWithToken', authenticateToken, loginWithToken);
 
-usersRouter.post('/checkCode', checkCode)
+usersRouter.post('/checkCode', checkCode);
 
-usersRouter.post('/sendCodeToMail', sendCodeToMail)
+usersRouter.post('/sendCodeToMail', sendCodeToMail);
+
+usersRouter.post('/getAllFavorites', getFavorites)
 
 // usersRouter.get('/allAvailableBabysitters', authenticateToken, findAllAvailableBabysitters)
-usersRouter.get('/allAvailableBabysitters',authenticateToken, findAllAvailableBabysitters)
+usersRouter.get('/allAvailableBabysitters', authenticateToken, findAllAvailableBabysitters);
 
- 
 export default usersRouter;
