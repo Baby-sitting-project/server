@@ -7,7 +7,7 @@ import {
   deleteUser,
   login,
   loginWithToken,
-  isUserRegistered, changeAvailability, findAllAvailableBabysitters, updatePassword
+  isUserRegistered, changeAvailability, findAllAvailableBabysitters, updatePassword, getBabysitterAvailability, setBabysitterAvailability
 } from '../DAL/controllers/users';
 
 import authenticateToken from "../utils/authMiddleware";
@@ -30,13 +30,16 @@ usersRouter.put('/updatePassword', updatePassword)
 usersRouter.post('/login', login)
 
 usersRouter.post('/loginWithToken', authenticateToken, loginWithToken)
-
+ 
 usersRouter.post('/checkCode', checkCode)
 
 usersRouter.post('/sendCodeToMail', sendCodeToMail)
 
+usersRouter.post('/babysitterAvailability', getBabysitterAvailability)
+
+usersRouter.put('/setBabysitterAvailability', setBabysitterAvailability)
+
 // usersRouter.get('/allAvailableBabysitters', authenticateToken, findAllAvailableBabysitters)
 usersRouter.get('/allAvailableBabysitters',authenticateToken, findAllAvailableBabysitters)
 
- 
 export default usersRouter;

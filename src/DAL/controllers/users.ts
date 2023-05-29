@@ -51,6 +51,14 @@ export const findAllAvailableBabysitters = (req, res) => {
   );
 };
 
+export const getBabysitterAvailability = (req, res) => {
+  UsersConn.findOne({ _id: req.body.babysitterId }, (err, doc) => resHandler(err, doc.available, res, 'There is been an error getting babysitter availability'));
+};
+
+export const setBabysitterAvailability = (req, res) => {
+  UsersConn.findOneAndUpdate({ _id: req.body.babysitterId }, { available: req.body.available }, (err, doc) => resHandler(err, doc, res, 'There is been an error getting babysitter availability'));
+};
+
 export const deleteUser = (req, res) => {
   UsersConn.findOneAndDelete(
     { _id: req.body.id },
@@ -61,12 +69,6 @@ export const deleteUser = (req, res) => {
     (err, doc) => resHandler(err, doc, res, req.body.id)
   );
 };
-
-
-
-
-
-
 
 export const isUserRegistered = async (req, res) => {
     UsersConn.find({ email: req.body.email.toLowerCase() }, (err, doc) => {
@@ -182,7 +184,7 @@ const isLessThan30Min = (date) => {
 
 export const login = (req, res) => {
   
-  UsersConn.findOne({ email: req.body.mail.toLowerCase() }, (err, doc) => {
+  UsersConn.findOne({ email: req.body.email.toLowerCase() }, (err, doc) => {
     err
       ? (ERR => {
           console.log('there is been an error checking the user' + err);
