@@ -22,7 +22,6 @@ feedbackRouter.post('/newFeedback', addNewFeedback)
 feedbackRouter.get('/getAllFeedback', getAllFeedbacks)
 
 feedbackRouter.post('/feedbacksByParent', getAllFeedbacksByParent)
-// feedbackRouter.post('/feedbacksByParent', authenticateToken, getAllFeedbacksByParent)
 
 feedbackRouter.post('/feedbacksByBabysitter', getAlFeedbacksByBabysitter)
 

@@ -24,7 +24,6 @@ meetingRouter.post('/newMeeting', addNewMeeting)
 //
 // meetingRouter.get('/getAllMeetings', getAllMeetings)
 
-// meetingRouter.post('/meetingsByBabysitter', authenticateToken, getAllMeetingsByBabysitter)
 meetingRouter.post('/meetingsByBabysitter', getAllMeetingsByBabysitter)
 meetingRouter.post('/meetingsByParent', getAllMeetingsByParent)
 
