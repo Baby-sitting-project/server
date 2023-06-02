@@ -54,6 +54,14 @@ export const findAllAvailableBabysitters = (req, res) => {
   );
 };
 
+export const getBabysitterAvailability = (req, res) => {
+  UsersConn.findOne({ _id: req.body.babysitterId }, (err, doc) => resHandler(err, doc.available, res, 'There is been an error getting babysitter availability'));
+};
+
+export const setBabysitterAvailability = (req, res) => {
+  UsersConn.findOneAndUpdate({ _id: req.body.babysitterId }, { available: req.body.available }, (err, doc) => resHandler(err, doc, res, 'There is been an error getting babysitter availability'));
+};
+
 export const deleteUser = (req, res) => {
   UsersConn.findOneAndDelete(
     { _id: req.body.id },
@@ -195,6 +203,7 @@ const isLessThan30Min = date => {
 };
 
 export const login = (req, res) => {
+  
   UsersConn.findOne({ email: req.body.mail.toLowerCase() }, (err, doc) => {
     err
       ? (ERR => {
@@ -246,6 +255,7 @@ const sendEmailCode = (result, mailCodeDoc, res) => {
       pass: 'eqteyihmqprjcygw'
     }
   });
+
 
   var mailOptions = {
     from: 'babysittingappteam@gmail.com',
