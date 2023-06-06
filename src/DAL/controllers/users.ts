@@ -123,7 +123,7 @@ export const getFavorites = async (req, res) => {
         resHandler(err, null, res, 'There has been an error getting all the unAuthorized users');
       } else {
         // Process the doc or send the response here
-        console.log(doc)
+        console.log(doc);
         res.send(doc);
       }
     });
@@ -162,6 +162,46 @@ export const changeAvailability = (req, res) => {
   UsersConn.findOneAndUpdate({ _id: req.body.ObjectId }, { available: req.body.available }, (err, doc) => {
     sendEmailToAutorizedUser(doc);
     resHandler(err, doc, res, 'There is been an error updating the user availability');
+  });
+};
+
+// export const addToFavorites = (req, res) => {
+//   UsersConn.findOneAndUpdate(
+//     { _id: req.body.userId },
+//     { $addToSet: { idsFavorites: req.body.favoriteId } },
+//     { new: true },
+//     (err, doc) => {
+//       resHandler(err, doc, res, 'There has been an error updating the user favorites');
+//     }
+//   ).then(() => console.log('success'));
+// };
+
+export const addToFavorites = async (req, res) => {
+  UsersConn.findOne({ _id: req.body.userId }, (err, user) => {
+    if (err) {
+      // Handle error
+      resHandler(err, null, res, 'There has been an error finding the user');
+    } else {
+      if (user) {
+        const index = user.idsFavorites.indexOf(req.body.favoriteId);
+        if (index !== -1) {
+          user.idsFavorites.splice(index, 1);
+        } else {
+          user.idsFavorites.push(req.body.favoriteId);
+        }
+        user.save((err, updatedUser) => {
+          if (err) {
+            // Handle error
+            resHandler(err, null, res, 'There has been an error updating the user availability');
+          } else {
+            resHandler(null, updatedUser, res, 'User successfully added to favorites');
+          }
+        });
+      } else {
+        // User not found
+        resHandler(null, null, res, 'User not found');
+      }
+    }
   });
 };
 

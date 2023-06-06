@@ -11,7 +11,8 @@ import {
   changeAvailability,
   findAllAvailableBabysitters,
   updatePassword,
-  getFavorites
+  getFavorites,
+  addToFavorites
 } from '../DAL/controllers/users';
 
 import authenticateToken from '../utils/authMiddleware';
@@ -40,6 +41,8 @@ usersRouter.post('/checkCode', checkCode);
 usersRouter.post('/sendCodeToMail', sendCodeToMail);
 
 usersRouter.post('/getAllFavorites', getFavorites)
+
+usersRouter.post('/addToFavorites', addToFavorites)
 
 // usersRouter.get('/allAvailableBabysitters', authenticateToken, findAllAvailableBabysitters)
 usersRouter.get('/allAvailableBabysitters', authenticateToken, findAllAvailableBabysitters);
