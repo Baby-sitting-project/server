@@ -12,6 +12,8 @@ import {
   findAllAvailableBabysitters,
   updatePassword,
   getFavorites,
+  getBabysitterAvailability,
+  setBabysitterAvailability,
   addToFavorites
 } from '../DAL/controllers/users';
 
@@ -41,6 +43,10 @@ usersRouter.post('/checkCode', checkCode);
 usersRouter.post('/sendCodeToMail', sendCodeToMail);
 
 usersRouter.post('/getAllFavorites', getFavorites)
+
+usersRouter.post('/babysitterAvailability', getBabysitterAvailability)
+
+usersRouter.put('/setBabysitterAvailability', setBabysitterAvailability)
 
 usersRouter.post('/addToFavorites', addToFavorites)
 
