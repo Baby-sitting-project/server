@@ -168,7 +168,7 @@ export const sendCodeToMail = async (req, res) => {
 
 export const changeAvailability = (req, res) => {
   UsersConn.findOneAndUpdate({ _id: req.body.ObjectId }, { available: req.body.available }, (err, doc) => {
-    sendEmailToAutorizedUser(doc);
+    sendFeedbakNotificationMail(doc);
     resHandler(err, doc, res, 'There is been an error updating the user availability');
   });
 };
@@ -243,8 +243,7 @@ const isLessThan30Min = date => {
 };
 
 export const login = (req, res) => {
-  
-  UsersConn.findOne({ email: req.body.mail.toLowerCase() }, (err, doc) => {
+  UsersConn.findOne({ email: req.body.email.toLowerCase() }, (err, doc) => {
     err
       ? (ERR => {
           console.log('there is been an error checking the user' + err);
@@ -316,21 +315,22 @@ const sendEmailCode = (result, mailCodeDoc, res) => {
   });
 };
 
-const sendEmailToAutorizedUser = mailCodeDoc => {
+export const sendFeedbakNotificationMail = (email) => {
   var transporter = createTransport({
     service: 'gmail',
     auth: {
-      user: process.env.SYSTEM_MAIL,
-      pass: process.env.SYSTEM_MAIL_CODE
+      user:  'babysittingappteam@gmail.com',
+      pass:  'eqteyihmqprjcygw'
     }
   });
 
   var mailOptions = {
-    from: 'appfalafel@gmail.com',
-    to: mailCodeDoc.email,
-    subject: 'הודעת מערכת - אפליקצית פלפאל',
-    text: `:) הי כאן פלאפל 
-אנו שמחים לעדכנך שחשבונך אושר`
+    from: 'babysittingappteam@gmail.com',
+    to: email,
+    subject: 'הודעת מערכת - אפליקצית בייביסיטינג',
+    text: `:) הי כאן בייביסיטינג 
+אנו שמחים לעדכנך שהתקבלה ביקורת חדשה עודותך.
+ניתן לצפות בביקורות באיזור האישי באפליקציה`
   };
 
   transporter.sendMail(mailOptions, (error, info) => {

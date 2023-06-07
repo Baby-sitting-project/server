@@ -1,6 +1,8 @@
 import { config } from 'dotenv';
 import { resHandler } from '.';
 import FeedbacksConn from '../models/feedback';
+import UsersConn from '../models/users';
+import { sendFeedbakNotificationMail } from './users';
 config();
 
 
@@ -14,10 +16,18 @@ export const addNewFeedback = async (req, res) => {
       stars: req.body.stars,
       time: new Date()
     },
-    (err, doc) => {
-      resHandler(err, doc, res, 'There is been an error creating the feedback');
+    (err, doc) =>
+    {
+      err
+        ? (() => {
+            resHandler(err, doc, res, 'There is been an error creating the feedback');
+          })()
+        : (() => {
+            sendBabysitterNotification(req.body.babysitterId);
+          })();
     }
-  );
+    );
+    
 };
 //
 // export const updateFeedbackStatus = (req, res) => {
@@ -32,6 +42,14 @@ export const addNewFeedback = async (req, res) => {
 //   );
 // };
 //
+
+const sendBabysitterNotification = (babysitterId) => {
+  UsersConn.findOne({ _id: babysitterId },  (err, doc) =>
+  {
+    sendFeedbakNotificationMail(doc.email)
+  });
+};
+
 export const getAllFeedbacks = (req, res) => {
   FeedbacksConn.find({}, (err, doc) => resHandler(err, doc, res, 'There is been an error getting all the feedback'));
 };
