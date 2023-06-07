@@ -7,7 +7,6 @@ config();
 
 
 export const addNewFeedback = async (req, res) => {
-  const date = new Date().toLocaleString('en-US', { timeZone: 'Asia/Jerusalem' });
   FeedbacksConn.create(
     {
       parentId: req.body.parentId,
@@ -15,7 +14,7 @@ export const addNewFeedback = async (req, res) => {
       nickName: req.body.nickName,
       comment: req.body.comment,
       stars: req.body.stars,
-      time: new Date(date)
+      time: new Date()
     },
     (err, doc) =>
     {
