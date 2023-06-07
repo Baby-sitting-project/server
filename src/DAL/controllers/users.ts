@@ -180,8 +180,7 @@ const isLessThan30Min = (date) => {
 }
 
 export const login = (req, res) => {
-  
-  UsersConn.findOne({ email: req.body.mail.toLowerCase() }, (err, doc) => {
+  UsersConn.findOne({ email: req.body.email.toLowerCase() }, (err, doc) => {
     err
       ? (ERR => {
           console.log('there is been an error checking the user' + err);
