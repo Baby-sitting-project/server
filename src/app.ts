@@ -11,6 +11,7 @@ import feedbackRouter from './routes/feedback-router';
 import meetingRouter from './routes/meeting-router';
 
 import mongoose, { Schema } from 'mongoose';
+import connectionsRouter from './routes/connections-router';
 
 const app: Application = express();
 
@@ -35,6 +36,7 @@ app.use((_, res, next) => {
 app.use(usersRouter);
 app.use(feedbackRouter);
 app.use(meetingRouter);
+app.use(connectionsRouter);
 
 app.set('showStackError', true);
 
