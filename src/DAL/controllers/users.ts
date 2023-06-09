@@ -48,7 +48,7 @@ export const addNewUser = async (req, res) => {
   }
 };
 
-export const findAllAvailableBabysitters = (req, res) => {
+export const findAllAvailableBabysitters = (req, res) => {  
   UsersConn.find({ available: true }, (err, doc) =>
     resHandler(err, doc, res, 'There is been an error getting all the unAuthorized users')
   );

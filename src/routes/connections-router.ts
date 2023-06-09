@@ -10,6 +10,6 @@ const connectionsRouter = Router();
 
 connectionsRouter.post('/newConnection', addConnection)
 
-connectionsRouter.get('/getConnectionsByParent', getConnectionsByParent)
+connectionsRouter.post('/getConnectionsByParent', getConnectionsByParent)
 
 export default connectionsRouter;
