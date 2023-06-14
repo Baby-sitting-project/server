@@ -25,5 +25,25 @@ export const addConnection = async (req, res) => {
 };
 
 export const getConnectionsByParent = (req, res) => {
-  ConnectionsConn.findOneAndDelete({ parentId: req.body.parentId }, (err, doc) => resHandler(err, doc, res, 'There has been a problem finding a connection'));
+  ConnectionsConn.findOne({ parentId: req.body.parentId },  (err, doc) => {
+    err
+      ? (() => {
+          res.send('There has been a problem finding a connection');
+        })()
+      : (() => {
+          (() => {
+            if(isMoreThan1Minut(doc.date)){
+              ConnectionsConn.findOneAndDelete({ parentId: req.body.parentId }, (err, doc) => resHandler(err, doc, res, 'There has been a problem finding a connection'));
+            }
+            else res.send();
+          })();
+        })();
+  })
+  
+};
+
+const isMoreThan1Minut = date => {
+  const diffTime = Math.abs(new Date().getTime() - date.getTime());
+
+  return diffTime / 60000 > 0.1;
 };
