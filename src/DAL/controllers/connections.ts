@@ -32,10 +32,15 @@ export const getConnectionsByParent = (req, res) => {
         })()
       : (() => {
           (() => {
-            if(isMoreThan1Minut(doc.date)){
+           if(doc){
+            if(isMoreThan1Minut(doc?.date)){
               ConnectionsConn.findOneAndDelete({ parentId: req.body.parentId }, (err, doc) => resHandler(err, doc, res, 'There has been a problem finding a connection'));
             }
             else res.send();
+           } 
+           else{
+            res.send();
+           }
           })();
         })();
   })
@@ -43,6 +48,8 @@ export const getConnectionsByParent = (req, res) => {
 };
 
 const isMoreThan1Minut = date => {
+  console.log(date);
+  
   const diffTime = Math.abs(new Date().getTime() - date.getTime());
 
   return diffTime / 60000 > 0.1;
